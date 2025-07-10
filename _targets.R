@@ -38,5 +38,5 @@ list(
     dat_load_intersect_buffer_and_postcodes,
     do_dat_load_intersect_buffer_and_postcodes(dat_buffers_around_ap_monitors, dat_load_postcodes)
   )
-  
+
 )
