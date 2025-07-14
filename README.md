@@ -4,7 +4,7 @@ Ivan Hanigan & Anh Han
 
 20250708
 
-## Postcode coverage within air quality monitoring buffers in Australia
+## Postcode coverage within air quality monitoring buffers (5km and 10km from stations) in NSW Australia 
 
 This repository contains an R `targets` pipeline for analysing postcode-level coverage within 5km and 10km buffers around air quality monitoring stations. Developed for NSW using `terra` package, the pipeline is designed to be replicate across Australian states and territories.
 
@@ -29,8 +29,6 @@ All spatial operations use the `GDA94` coordinate system (`EPSG:4283`) for accur
 
 `config.R`: Configuration file for state-specific settings and file paths
 
-`Rtargets_prep_tools.xlsx`: Spreadsheet for systematic target generation and pipeline planning
-
 The pipeline requires the following R packages: `targets`, `data.table`, `terra`, `sf`
 
 ### Data sources
@@ -39,16 +37,14 @@ AQ monitoring stations are provided in `.xlsx` format and converted to `.csv` fo
 
 Postcode boundary data are sourced from the **Australian Bureau of Statistics Postal Areas 2016 shapefile**, available from the ABS website or through the [`Cloud CARDAT`](https://cloud.car-dat.org/index.php/apps/files/files/1107?dir=/Environment_General/ABS_data/ABS_POA) data inventory. The analysis filters for NSW postcodes using the `poa_code16` field (postcodes starting with `2`). The shapefile path is set in `config.R` via the `filename_polygons` variable.
 
+### Results
+
 Pipeline outputs include spatial coverage metrics for each buffer and postcode intersection:
 
 -   Postcode identifiers `poa_code16`
-
 -   Monitoring station identifiers `nsw_air_quality_monitoring_aqmn_site`
-
 -   Buffer distances `5km` and `10km`
-
 -   Intersection areas `(m²)`
-
 -   Percentages of postcode are covered by the buffer.
 
 ### Pipeline structure
@@ -64,8 +60,6 @@ Pipeline outputs include spatial coverage metrics for each buffer and postcode i
 ### Usage
 
 The process for running the pipeline includes the following phases:
-
-**Planning phase**: Define pipeline targets and dependencies in `targets_prep_tool.xlsx`
 
 **Execution phase**: Execute the generated pipeline with `tar_make()`
 

@@ -45,7 +45,6 @@ do_dat_load_intersect_buffer_and_postcodes <- function(
   
   # Combine both results
   results_combined <- rbindlist(list(results_5km, results_10km))
-  # Save results
-  # fwrite(results_combined, "buffer_postcode_coverage_all.csv")
+  return(results_combined)
 }
 

@@ -10,6 +10,7 @@ names(dat) <- gsub("__", "_", names(dat))
 
 vect_obj <- vect(dat, geom = c("longitude_east_", "latitude_south_"), crs = "EPSG:4283") # GDA94 is EPSG:4283
 plot(vect_obj)
+writeVector(vect_obj, "data_derived/dat_ap_monitors.gpkg")
 vect_obj <- wrap(vect_obj)
 return(vect_obj)
 }

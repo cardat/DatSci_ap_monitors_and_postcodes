@@ -38,5 +38,10 @@ list(
     dat_load_intersect_buffer_and_postcodes,
     do_dat_load_intersect_buffer_and_postcodes(dat_buffers_around_ap_monitors, dat_load_postcodes)
   )
-
+  ,
+  #### Save results ####
+  tar_target(
+    save_results,
+    fwrite(dat_load_intersect_buffer_and_postcodes, "data_derived/buffer_postcode_coverage_all.csv")
+  )
 )
