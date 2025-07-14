@@ -1,20 +1,100 @@
 # DatSci_ap_monitors_and_postcodes
+
 Ivan Hanigan & Anh Han
 
 20250708
 
-## NSW AQ Monitoring Stations Buffer Analysis
+## Postcode coverage within air quality monitoring buffers in Australia
+
+This repository contains an R `targets` pipeline for analysing postcode-level coverage within 5km and 10km buffers around air quality monitoring stations. Developed for NSW using `terra` package, the pipeline is designed to be replicate across Australian states and territories.
 
 ### Overview
-This repository contains an analytical pipeline using R `targets` package to analyse spatial coverage and proximity patterns of air quality monitoring stations and postcode boundaries. The analysis calculates postcodes areas and coverage proportions within 5km and 10km buffers around each monitoring stations, with initial development focused on NSW DCCEEW stations but designed for adaptation to other Australian states and territories.
 
-### Objectives
-1. Generate 5km and 10km buffers around each of the 51 NSW air quality monitoring stations
-2. Identify postcodes that intersect with each buffer zone
-3. Calculate the area (m^2^) of postcode coverage within each buffer
-4. Calculate the percentage of each postcode covered within the buffer zones
+The analysis performs four main tasks:
+
+1.  Generate 5km and 10km buffers around each of the 51 NSW air quality monitoring stations
+2.  Identify postcodes that intersect with each buffer zone
+3.  Calculate the area (m^2^) of postcode coverage within each buffer
+4.  Calculate the percentage of each postcode covered within the buffer zones
+
+All spatial operations use the `GDA94` coordinate system (`EPSG:4283`) for accurate distance-based buffering and area calculations across Australian geographies.
+
+### Contents
+
+`R/`: Contains the R functions for data loading, buffer generation, and spatial intersection analysis
+
+`run.R`: A master R script to run a pipeline
+
+`_targets.R`: A main target pipeline script
+
+`config.R`: Configuration file for state-specific settings and file paths
+
+`Rtargets_prep_tools.xlsx`: Spreadsheet for systematic target generation and pipeline planning
+
+The pipeline requires the following R packages: `targets`, `data.table`, `terra`, `sf`
 
 ### Data sources
-- AQ monitoring stations `data_provided/` contains latitude/longitude coordinates for 51 NSW monitoring stations, using `GDA94` coordinate system (EPSG:4283)
 
-- Postcode boundaries retrieved from the _ABS Postal Areas 2016_. Dataset can be found in [Cloud CARDAT](https://cloud.car-dat.org/index.php/apps/files/files/5714?dir=/Environment_General/ABS_data/ABS_POA/abs_poa_2016_data_provided). 
+AQ monitoring stations are provided in `.xlsx` format and converted to `.csv` format for use in the pipeline. The file contains latitude and longitude coordinates for 51 NSW DCCEEW monitoring stations. During preprocessing, column names are automatically cleaned: all names are converted to lowercase format and dots or spaces are replaced with underscores `_`.
+
+Postcode boundary data are sourced from the **Australian Bureau of Statistics Postal Areas 2016 shapefile**, available from the ABS website or through the [`Cloud CARDAT`](https://cloud.car-dat.org/index.php/apps/files/files/1107?dir=/Environment_General/ABS_data/ABS_POA) data inventory. The analysis filters for NSW postcodes using the `poa_code16` field (postcodes starting with `2`). The shapefile path is set in `config.R` via the `filename_polygons` variable.
+
+Pipeline outputs include spatial coverage metrics for each buffer and postcode intersection:
+
+-   Postcode identifiers `poa_code16`
+
+-   Monitoring station identifiers `nsw_air_quality_monitoring_aqmn_site`
+
+-   Buffer distances `5km` and `10km`
+
+-   Intersection areas `(m²)`
+
+-   Percentages of postcode are covered by the buffer.
+
+### Pipeline structure
+
+`dat_load_ap_monitors`: Load and convert monitoring station coordinates to spatial vector object
+
+`dat_buffers_around_ap_monitors`: Generate 5km and 10km buffers around each station
+
+`dat_load_postcodes`: Load postcode boundaries and filter to NSW
+
+`dat_load_intersect_buffer_and_postcodes`: Calculate intersections and coverage values
+
+### Usage
+
+The process for running the pipeline includes the following phases:
+
+**Planning phase**: Define pipeline targets and dependencies in `targets_prep_tool.xlsx`
+
+**Execution phase**: Execute the generated pipeline with `tar_make()`
+
+-   Run the full pipeline:\
+
+```         
+source("run.R")   # Loads libraries, config, and targets 
+tar_make()        # Builds all pipeline targets
+```
+
+-   Visualise the pipeline structure:\
+    `tar_visnetwork(targets_only = TRUE)`
+
+**Exploration phase**: Develop pipeline and debug errors in Interactive mode
+
+-   Work interactively step-by-step with target outputs:\
+
+```         
+source("run.R")  
+tar_load(dat_load_ap_monitors)   # Entre target name
+str(dat_load_ap_monitors)  
+plot(dat_load_ap_monitors$longitude_east_, dat_load_ap_monitors$latitude_south_)
+```
+
+-   Useful diagnostics:\
+
+```         
+tar_meta(fields = error)         # View targets with errors  
+tar_outdated()                   # Check for outdated targets  
+tar_invalidate("target_name")    # Force specific target to rebuild  
+tar_objects()                    # List all targets in memory
+```
