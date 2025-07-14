@@ -14,7 +14,7 @@ The analysis performs four main tasks:
 
 1.  Generate 5km and 10km buffers around each of the 51 NSW air quality monitoring stations
 2.  Identify postcodes that intersect with each buffer zone
-3.  Calculate the area (m^2^) of postcode coverage within each buffer
+3.  Calculate the area (m²) of postcode coverage within each buffer
 4.  Calculate the percentage of each postcode covered within the buffer zones
 
 All spatial operations use the `GDA94` coordinate system (`EPSG:4283`) for accurate distance-based buffering and area calculations across Australian geographies.
